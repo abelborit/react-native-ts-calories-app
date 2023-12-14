@@ -16,7 +16,7 @@ export const StackNavigator = () => {
     <Stack.Navigator
       initialRouteName="HomeScreen"
       screenOptions={{
-        // headerShown: false,
+        headerShown: false,
         headerStyle: {
           elevation: 0, // quitar la linea abajo del header en Android
           shadowColor: 'transparent', // quitar la linea abajo del header en iOS
