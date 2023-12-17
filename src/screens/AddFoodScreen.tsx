@@ -1,10 +1,62 @@
-import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {Alert, ScrollView, StyleSheet, Text, View} from 'react-native';
 import {Button, Input} from '@rneui/themed';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {HeaderComponent} from '../components/HeaderComponent';
+import {AddFoodModal, FoodFormInterface} from '../components/AddFoodModal';
+import {useFoodStorage} from '../hooks/useFoodStorage';
+import {MealElement} from '../components/MealElement';
 
 export const AddFoodScreen = () => {
+  const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
+  const [initialFoods, setInitialFoods] = useState<FoodFormInterface[]>([]);
+  const [searchInput, setSearchInput] = useState<string>('');
+  const {handleGetFoods} = useFoodStorage();
+
+  const loadFoods = async () => {
+    try {
+      const foodResponse = await handleGetFoods();
+
+      setInitialFoods(foodResponse);
+    } catch (error) {
+      console.error(error);
+      setInitialFoods([]);
+    }
+  };
+
+  const handleCloseModal = async (shouldUpdate?: boolean) => {
+    if (shouldUpdate) {
+      Alert.alert('The food has been saved correctly ⌛✅');
+      loadFoods();
+    }
+    setIsOpenModal(false);
+
+    /* si la comida se ha guardado de manera exitosa entonces debe actualizarse y hacer un fetch nuevamente para traer la información actualizada */
+  };
+
+  const handleSearchFood = async () => {
+    try {
+      const foodResponse = await handleGetFoods();
+
+      setInitialFoods(
+        foodResponse.filter((element: FoodFormInterface) =>
+          element.name
+            .toLocaleUpperCase()
+            .includes(searchInput.toLocaleUpperCase()),
+        ),
+      );
+    } catch (error) {
+      console.error(error);
+      setInitialFoods([]);
+    }
+  };
+
+  useEffect(() => {
+    loadFoods();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <View style={styles.container}>
       <HeaderComponent />
@@ -20,7 +72,7 @@ export const AddFoodScreen = () => {
             type="solid"
             color={'#4ECB71'}
             activeOpacity={0.7}
-            onPress={() => {}}>
+            onPress={() => setIsOpenModal(true)}>
             <Icon name="add-circle-outline" size={30} color="#fff" />
           </Button>
         </View>
@@ -28,7 +80,11 @@ export const AddFoodScreen = () => {
 
       <View style={styles.inputSearchContainer}>
         <View style={styles.inputContainer}>
-          <Input placeholder="apples, pie, chicken..." />
+          <Input
+            placeholder="apples, pie, chicken..."
+            value={searchInput}
+            onChangeText={(value: string) => setSearchInput(value)}
+          />
         </View>
 
         <View style={styles.btnContainer}>
@@ -37,11 +93,25 @@ export const AddFoodScreen = () => {
             type="solid"
             color={'#ADE8AF'}
             activeOpacity={0.7}
-            onPress={() => {}}>
+            onPress={() => handleSearchFood()}>
             <Text style={{...styles.btnText, color: '#333'}}>Search</Text>
           </Button>
         </View>
       </View>
+
+      <AddFoodModal
+        isOpenModal={isOpenModal}
+        handleCloseModal={handleCloseModal}
+      />
+
+      <ScrollView>
+        {initialFoods?.map(element => (
+          <MealElement
+            key={element.name + element.calories}
+            mealElement={element}
+          />
+        ))}
+      </ScrollView>
     </View>
   );
 };
