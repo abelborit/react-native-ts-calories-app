@@ -1,8 +1,48 @@
+# React Native & TypeScript - Calories App
+
+---
+
+# Temas puntuales de la sección
+
+### ¿Qué veremos en esta sección?
+
+En esta sección veremos una aplicación de calorías. Se hará un semi CRUD para poder añadir comidas a través de un formulario que aparece mediante un modal y eliminar comidas que ya están creadas lo cual estas acciones afectarán directamente el porcentaje de calorías consumidas durante el día.
+
+### \* RECURSOS A USAR:
+
+- React Native Elements: https://reactnativeelements.com/docs/installation
+  - `npm install @rneui/themed @rneui/base`
+- Async Storage: https://react-native-async-storage.github.io/async-storage/docs/install/
+  - `npm install @react-native-async-storage/async-storage`
+- date-fns: https://date-fns.org/docs/Getting-Started
+  - `npm install date-fns --save`
+- react-native-circular-progress-indicator: https://github.com/nithinpp69/react-native-circular-progress-indicator
+  - `npm install react-native-circular-progress-indicator`
+  - Peer Dependencies:
+    - react-native-svg: https://www.npmjs.com/package/react-native-svg#installation
+    - react-native-reanimated-v2: https://docs.swmansion.com/react-native-reanimated/docs/fundamentals/getting-started
+    - react-native-redash: https://github.com/wcandillon/react-native-redash#installation
+
+### \* IMÁGENES DE LA APLICACIÓN:
+
+<div>
+  <img src="./screenshotsApp/Screenshot_1702870577.png" alt="image" width="200">
+  <img src="./screenshotsApp/Screenshot_1702870582.png" alt="image" width="200">
+  <img src="./screenshotsApp/Screenshot_1702870590.png" alt="image" width="200">
+  <img src="./screenshotsApp/Screenshot_1702870593.png" alt="image" width="200">
+  <img src="./screenshotsApp/Screenshot_1702870596.png" alt="image" width="200">
+  <img src="./screenshotsApp/Screenshot_1702870600.png" alt="image" width="200">
+  <img src="./screenshotsApp/Screenshot_1702870615.png" alt="image" width="200">
+  <img src="./screenshotsApp/Screenshot_1702870625.png" alt="image" width="200">
+</div>
+
+---
+
 This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
 
 # Getting Started
 
->**Note**: Make sure you have completed the [React Native - Environment Setup](https://reactnative.dev/docs/environment-setup) instructions till "Creating a new application" step, before proceeding.
+> **Note**: Make sure you have completed the [React Native - Environment Setup](https://reactnative.dev/docs/environment-setup) instructions till "Creating a new application" step, before proceeding.
 
 ## Step 1: Start the Metro Server
 
