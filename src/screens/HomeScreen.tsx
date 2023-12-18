@@ -1,5 +1,5 @@
 import React, {useCallback, useState} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {ScrollView, StyleSheet, Text, View} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {Button} from '@rneui/themed';
 import {StackScreenProps} from '@react-navigation/stack';
@@ -8,20 +8,55 @@ import {HeaderComponent} from '../components/HeaderComponent';
 import {useFoodStorage} from '../hooks/useFoodStorage';
 import {useFocusEffect} from '@react-navigation/native';
 import {FoodFormInterface} from '../components/AddFoodModal';
+import {TodayCalories, TodayCaloriesProps} from '../components/TodayCalories';
+import {MealElement} from '../components/MealElement';
 
 interface HomeScreenProps
   extends StackScreenProps<RootStackParams, 'HomeScreen'> {}
 
+const totalCaloriesPerDay = 2000;
+
 export const HomeScreen = ({navigation}: HomeScreenProps) => {
   const insets = useSafeAreaInsets();
   const [todayFoods, setTodayFoods] = useState<FoodFormInterface[]>([]);
+  const [todayStatitics, setTodayStatitics] = useState<TodayCaloriesProps>({
+    totalCalories: totalCaloriesPerDay,
+    consumedCalories: 0,
+    remainingCalories: 0,
+    percentaje: 0,
+  });
   const {handleGetTodayFoods, ClearItemAsyncStorage} = useFoodStorage();
+
+  const calculateTodayStatitics = (foods: FoodFormInterface[]) => {
+    try {
+      const consumedCalories = foods.reduce(
+        (acumulator, currentValue) =>
+          acumulator + Number(currentValue.calories),
+        0,
+      );
+
+      const remainingCalories = totalCaloriesPerDay - consumedCalories;
+
+      const percentaje = (consumedCalories / totalCaloriesPerDay) * 100;
+
+      setTodayStatitics({
+        totalCalories: totalCaloriesPerDay,
+        consumedCalories,
+        remainingCalories,
+        percentaje,
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const loadTodayFoods = useCallback(async () => {
     try {
-      const todayFoodResponse = await handleGetTodayFoods();
+      const todayFoodResponse =
+        (await handleGetTodayFoods()) as FoodFormInterface[];
 
-      setTodayFoods(todayFoodResponse || []);
+      calculateTodayStatitics(todayFoodResponse);
+      setTodayFoods(todayFoodResponse);
     } catch (error) {
       console.error(error);
       setTodayFoods([]);
@@ -37,8 +72,6 @@ export const HomeScreen = ({navigation}: HomeScreenProps) => {
       loadTodayFoods().catch(null);
     }, [loadTodayFoods]),
   );
-
-  console.log(todayFoods);
 
   return (
     <View
@@ -76,6 +109,20 @@ export const HomeScreen = ({navigation}: HomeScreenProps) => {
           <Text style={styles.btnClearText}>Clear All Async Storage</Text>
         </Button>
       </View>
+
+      <TodayCalories {...todayStatitics} />
+
+      <ScrollView>
+        {todayFoods?.map((element, index) => (
+          <MealElement
+            key={element.name + element.calories + index}
+            mealElement={element}
+            isAbleToAdd={false}
+            handleCompleteAddOrRemoveItem={() => loadTodayFoods()}
+            itemPosition={index}
+          />
+        ))}
+      </ScrollView>
     </View>
   );
 };

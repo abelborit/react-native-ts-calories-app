@@ -17,7 +17,7 @@ export const AddFoodScreen = () => {
     try {
       const foodResponse = await handleGetFoods();
 
-      setInitialFoods(foodResponse);
+      setInitialFoods(foodResponse || []);
     } catch (error) {
       console.error(error);
       setInitialFoods([]);
@@ -105,10 +105,11 @@ export const AddFoodScreen = () => {
       />
 
       <ScrollView>
-        {initialFoods?.map(element => (
+        {initialFoods?.map((element, index) => (
           <MealElement
-            key={element.name + element.calories}
+            key={element.name + element.calories + index}
             mealElement={element}
+            isAbleToAdd={true}
           />
         ))}
       </ScrollView>

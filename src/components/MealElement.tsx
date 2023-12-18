@@ -7,15 +7,32 @@ import {useFoodStorage} from '../hooks/useFoodStorage';
 
 interface MealElementProps {
   mealElement: FoodFormInterface;
+  isAbleToAdd: boolean;
+  itemPosition?: number;
+  handleCompleteAddOrRemoveItem?: () => void;
 }
 
-export const MealElement = ({mealElement}: MealElementProps) => {
-  const {handleSaveTodayFood} = useFoodStorage();
+export const MealElement = ({
+  mealElement,
+  isAbleToAdd,
+  itemPosition,
+  handleCompleteAddOrRemoveItem,
+}: MealElementProps) => {
+  const {handleSaveTodayFood, handleRemoveTodayFood} = useFoodStorage();
 
-  const handleAddTodayItem = async () => {
+  const handleAddOrRemoveTodayItem = async () => {
     try {
-      await handleSaveTodayFood({...mealElement});
-      Alert.alert('The food has been saved correctly for today ⚡✅');
+      if (isAbleToAdd) {
+        await handleSaveTodayFood({...mealElement});
+        Alert.alert('The food has been saved correctly for today ⚡✅');
+      } else {
+        /* se hace esa validación para que no se rompa un poco el código o no nos de warnings pero igual si no viene el itemPosition es que se agregará un elemento y si viene entonces se eliminará */
+        await handleRemoveTodayFood(itemPosition ?? -1);
+        Alert.alert('The food has been removed correctly for today 💥✅');
+      }
+
+      /* si no viene definida (por arriba se está colocando como opcional) entonces no se ejecuta */
+      handleCompleteAddOrRemoveItem?.();
     } catch (error) {
       console.error(error);
       Alert.alert('The food has not been saved correctly for today ❌');
@@ -36,9 +53,13 @@ export const MealElement = ({mealElement}: MealElementProps) => {
           type="clear"
           color={'#4ECB71'}
           activeOpacity={0.7}
-          onPress={() => handleAddTodayItem()}
+          onPress={() => handleAddOrRemoveTodayItem()}
           buttonStyle={{width: 50}}>
-          <Icon name="add-circle-outline" size={30} color="#333" />
+          <Icon
+            name={isAbleToAdd ? 'add-circle-outline' : 'close-outline'}
+            size={30}
+            color="#333"
+          />
         </Button>
       </View>
     </View>

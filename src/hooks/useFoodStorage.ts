@@ -107,6 +107,26 @@ export const useFoodStorage = () => {
     }
   };
 
+  const handleRemoveTodayFood = async (foodIndex: number) => {
+    try {
+      const todayFoods = await handleGetTodayFoods();
+      const todayFilteredItems = todayFoods?.filter(
+        (element: FoodFormInterface, elementIndex: number) => {
+          return elementIndex !== foodIndex;
+        },
+      );
+
+      await AsyncStorage.setItem(
+        MY_TODAY_FOOD_KEY,
+        JSON.stringify(todayFilteredItems),
+      );
+
+      return Promise.resolve();
+    } catch (error) {
+      return Promise.reject(error);
+    }
+  };
+
   const ClearItemAsyncStorage = async () => {
     // Implementación de la función para limpiar el valor almacenado asincrónicamente
 
@@ -129,6 +149,7 @@ export const useFoodStorage = () => {
     handleGetFoods,
     handleSaveTodayFood,
     handleGetTodayFoods,
+    handleRemoveTodayFood,
     ClearItemAsyncStorage,
   };
 };
